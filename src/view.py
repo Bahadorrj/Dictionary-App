@@ -22,7 +22,7 @@ from PyQt6.QtCore import (
     pyqtSignal,
     QObject,
 )
-from src.backend import get_word_packet
+from src.backend import get_word_packet, resource_path
 
 
 # Worker signals to communicate between the worker thread and the UI thread.
@@ -48,7 +48,7 @@ class WordPacketWorker(QRunnable):
 
 
 class DictionaryApp(QMainWindow):
-    def __init__(self, json_path=os.path.join(os.getcwd(), "data/words.json")):
+    def __init__(self, json_path=resource_path("data/words.json")):
         super().__init__()
         self.json_path = json_path
         self.setWindowTitle("Dictionary Application")
@@ -130,8 +130,8 @@ class DictionaryApp(QMainWindow):
 
     def load_data(self):
         """Load words data from the JSON file located in the root directory."""
-        if os.path.isdir("data") is False:
-            os.mkdir("data")
+        if os.path.isdir(resource_path("data")) is False:
+            os.mkdir(resource_path("data"))
         if os.path.exists(self.json_path):
             try:
                 with open(self.json_path, "r") as file:

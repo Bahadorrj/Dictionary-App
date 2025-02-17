@@ -1,3 +1,5 @@
+import sys
+import os
 import requests
 
 
@@ -54,6 +56,16 @@ def get_word_packet(word):
     except (ValueError, requests.exceptions.RequestException) as e:
         print(f"Error: {e}")
     return packet
+
+
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path).replace("\\", "/")
 
 
 # Example usage
