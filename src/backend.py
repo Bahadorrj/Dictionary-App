@@ -32,9 +32,9 @@ def get_response(word, version="v2"):
 
 
 def get_word_packet(word):
+    packet = []
     try:
         result = get_response(word)
-        packet = []
         if result and len(result) > 0:
             entry = result[0]
             if "meanings" in entry and len(entry["meanings"]) > 0:
@@ -51,9 +51,9 @@ def get_word_packet(word):
                             "example": example,
                         }
                         packet.append(pack)
-        return packet
     except (ValueError, requests.exceptions.RequestException) as e:
         print(f"Error: {e}")
+    return packet
 
 
 # Example usage
