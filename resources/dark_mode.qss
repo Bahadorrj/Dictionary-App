@@ -5,6 +5,7 @@ QWidget {
     background-color: #2b2b2b;
     color: #dcdcdc;
     font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
 }
 
 /* Main Window */
