@@ -1,0 +1,62 @@
+/* light_mode.qss */
+
+/* General widget styling */
+QWidget {
+    background-color: #f0f0f0;
+    color: #202020;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Main Window */
+QMainWindow {
+    background-color: #f0f0f0;
+}
+
+/* QListWidget styling */
+QListWidget {
+    background-color: #ffffff;
+    border: 1px solid #c8c8c8;
+    selection-background-color: #007acc;
+    selection-color: #ffffff;
+}
+
+/* QLineEdit styling */
+QLineEdit {
+    background-color: #ffffff;
+    border: 1px solid #c8c8c8;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+/* QPushButton styling */
+QPushButton {
+    background-color: #007acc;
+    border: none;
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+QPushButton:hover {
+    background-color: #005f9e;
+}
+QPushButton:pressed {
+    background-color: #004b7c;
+}
+
+/* QTableWidget styling */
+QTableWidget {
+    background-color: #ffffff;
+    gridline-color: #c8c8c8;
+    border: 1px solid #c8c8c8;
+}
+QHeaderView::section {
+    background-color: #e0e0e0;
+    padding: 4px;
+    border: 1px solid #d0d0d0;
+}
+
+/* QMessageBox styling */
+QMessageBox {
+    background-color: #f0f0f0;
+    color: #202020;
+}
