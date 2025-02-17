@@ -34,7 +34,7 @@ This is a PyQt6-based dictionary application that allows users to add words, ret
 3. **Run the Application:**  
    Execute the main script to launch the application:
    ```bash
-   python main.py
+   python runner.py
    ```
 
 ---
