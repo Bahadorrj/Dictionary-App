@@ -1,6 +1,8 @@
 import sys
 import os
 import requests
+from gtts import gTTS
+from playsound import playsound
 
 
 def get_response(word, version="v2"):
@@ -56,6 +58,19 @@ def get_word_packet(word):
     except (ValueError, requests.exceptions.RequestException) as e:
         print(f"Error: {e}")
     return packet
+
+
+def play_word(word):
+    # Convert the word to speech
+    tts = gTTS(text=word, lang="en")
+    temp_file = "temp_audio.mp3"
+    tts.save(temp_file)
+
+    # Play the audio file
+    playsound(temp_file)
+
+    # Optionally, remove the file after playing
+    os.remove(temp_file)
 
 
 def resource_path(relative_path):

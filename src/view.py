@@ -21,8 +21,10 @@ from PyQt6.QtCore import (
     QThreadPool,
     pyqtSignal,
     QObject,
+    QSize,
 )
-from src.backend import get_word_packet, resource_path
+from PyQt6.QtGui import QIcon
+from src.backend import get_word_packet, resource_path, play_word
 
 
 # Worker signals to communicate between the worker thread and the UI thread.
@@ -88,7 +90,16 @@ class DictionaryApp(QMainWindow):
 
         # Label to show the selected word.
         self.word_label = QLabel("Word Details:")
-        right_layout.addWidget(self.word_label)
+        self.play_sound_button = QPushButton()
+        self.play_sound_button.setIcon(QIcon(resource_path("resources/sound.png")))
+        self.play_sound_button.setIconSize(QSize(32, 32))
+        self.play_sound_button.setStyleSheet("background-color: transparent;")
+        self.play_sound_button.setFixedSize(32, 32)
+        self.play_sound_button.clicked.connect(self.play_word)
+        top_layout = QHBoxLayout()
+        top_layout.addWidget(self.word_label)
+        top_layout.addWidget(self.play_sound_button)
+        right_layout.addLayout(top_layout)
 
         # Table to display details: part of speech, definition, and example.
         self.details_table = QTableWidget()
@@ -258,5 +269,10 @@ class DictionaryApp(QMainWindow):
             if word in self.words_data:
                 del self.words_data[word]
                 self.save_data()
-            self.details_table.setRowCount(0)
-            self.word_label.setText("Word Details:")
+
+    def play_word(self):
+        current_item = self.word_list.currentItem()
+        if not current_item:
+            return
+        word = current_item.text()
+        play_word(word)
