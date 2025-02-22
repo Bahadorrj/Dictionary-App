@@ -28,7 +28,7 @@ This is a PyQt6-based dictionary application that allows users to add words, ret
 2. **Install Dependencies:**  
    Ensure you have Python installed and install the required libraries:
    ```bash
-   pip install pyqt6 requests
+   pip install pyqt6 requests googlesearch-python
    ```
 
 3. **Run the Application:**  
