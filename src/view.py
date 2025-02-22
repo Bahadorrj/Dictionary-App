@@ -36,24 +36,24 @@ from src.backend import (
 
 # Worker signals to communicate between the worker thread and the UI thread.
 class WorkerSignals(QObject):
-    finished = pyqtSignal(str, list)  # Emits the word and its packet.
+    finished = pyqtSignal(str, object)
     error = pyqtSignal(str)
 
 
-# Worker for fetching the word packet without blocking the UI.
-class WordPacketWorker(QRunnable):
-    def __init__(self, word: str):
+class Worker(QRunnable):
+    def __init__(self, word: str, func):
         super().__init__()
         self.word = word
+        self.func = func
         self.signals = WorkerSignals()
 
     def run(self):
         try:
-            packet = get_word_packet(self.word)
+            output = self.func(self.word)
         except Exception as e:
             self.signals.error.emit(str(e))
             return
-        self.signals.finished.emit(self.word, packet)
+        self.signals.finished.emit(self.word, output)
 
 
 class DictionaryApp(QMainWindow):
@@ -242,7 +242,7 @@ class DictionaryApp(QMainWindow):
 
         # Disable the add button while fetching to prevent multiple clicks.
         self.add_word_button.setEnabled(False)
-        worker = WordPacketWorker(word)
+        worker = Worker(word, get_word_packet)
         worker.signals.finished.connect(self.on_word_packet_fetched)
         worker.signals.error.connect(self.on_word_packet_error)
         self.threadpool.start(worker)
@@ -291,18 +291,36 @@ class DictionaryApp(QMainWindow):
                 self.save_data()
 
     def show_oxford_definitions(self):
+        self.oxford_dictionary_button.setEnabled(False)
         word = self.word_list.currentItem().text()
-        oxford_link = search_oxford_dictionary(word)
-        if oxford_link:
-            webbrowser.open(oxford_link)  # Open the link in the default browser
+        worker = Worker(word, search_oxford_dictionary)
+        worker.signals.finished.connect(self.on_oxford_search_finished)
+        worker.signals.error.connect(self.on_oxford_search_failed)
+        self.threadpool.start(worker)
+
+    def on_oxford_search_finished(self, word, link):
+        self.oxford_dictionary_button.setEnabled(True)
+        if link:
+            webbrowser.open(link)
         else:
             QMessageBox.warning(
                 self, "No Definition", f"No definition found for '{word}'."
             )
 
+    def on_oxford_search_failed(self, error_message):
+        self.oxford_dictionary_button.setEnabled(True)
+        self.add_word_button.setEnabled(True)
+        QMessageBox.warning(
+            self, "Error", f"Error retrieving word's oxford definition: {error_message}"
+        )
+
     def play_word(self):
+        self.play_sound_button.setEnabled(False)
         current_item = self.word_list.currentItem()
         if not current_item:
             return
         word = current_item.text()
-        play_word(word)
+        worker = Worker(word, play_word)
+        worker.signals.finished.connect(lambda: self.play_sound_button.setEnabled(True))
+        worker.signals.error.connect(lambda: self.play_sound_button.setEnabled(True))
+        self.threadpool.start(worker)
