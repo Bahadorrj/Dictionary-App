@@ -3,6 +3,7 @@ import os
 import requests
 from gtts import gTTS
 from playsound import playsound
+from googlesearch import search
 
 
 def get_response(word, version="v2"):
@@ -81,6 +82,23 @@ def resource_path(relative_path):
     except Exception:
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path).replace("\\", "/")
+
+
+def search_oxford_dictionary(word):
+    try:
+        query = f"{word} oxford dictionary"
+        results = search(query, num_results=1)
+        first_link = next(
+            (r for r in results if "oxfordlearnersdictionaries" in r), None
+        )
+
+        if first_link:
+            return first_link
+        else:
+            return None
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
 
 
 # Example usage

@@ -1,5 +1,6 @@
 import os
 import json
+import webbrowser
 from PyQt6.QtWidgets import (
     QMainWindow,
     QWidget,
@@ -22,9 +23,15 @@ from PyQt6.QtCore import (
     pyqtSignal,
     QObject,
     QSize,
+    Qt,
 )
-from PyQt6.QtGui import QIcon
-from src.backend import get_word_packet, resource_path, play_word
+from PyQt6.QtGui import QIcon, QCursor
+from src.backend import (
+    get_word_packet,
+    resource_path,
+    play_word,
+    search_oxford_dictionary,
+)
 
 
 # Worker signals to communicate between the worker thread and the UI thread.
@@ -90,14 +97,27 @@ class DictionaryApp(QMainWindow):
 
         # Label to show the selected word.
         self.word_label = QLabel("Word Details:")
+        self.oxford_dictionary_button = QPushButton()
+        self.oxford_dictionary_button.setIcon(
+            QIcon(resource_path("resources/oxford.png"))
+        )
+        self.oxford_dictionary_button.setIconSize(QSize(32, 32))
+        self.oxford_dictionary_button.setStyleSheet("background-color: transparent;")
+        self.oxford_dictionary_button.setFixedSize(32, 32)
+        self.oxford_dictionary_button.setCursor(
+            QCursor(Qt.CursorShape.PointingHandCursor)
+        )  # Set pointer cursor
+        self.oxford_dictionary_button.clicked.connect(self.show_oxford_definitions)
         self.play_sound_button = QPushButton()
         self.play_sound_button.setIcon(QIcon(resource_path("resources/sound.png")))
         self.play_sound_button.setIconSize(QSize(32, 32))
         self.play_sound_button.setStyleSheet("background-color: transparent;")
         self.play_sound_button.setFixedSize(32, 32)
+        self.play_sound_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.play_sound_button.clicked.connect(self.play_word)
         top_layout = QHBoxLayout()
         top_layout.addWidget(self.word_label)
+        top_layout.addWidget(self.oxford_dictionary_button)
         top_layout.addWidget(self.play_sound_button)
         right_layout.addLayout(top_layout)
 
@@ -269,6 +289,16 @@ class DictionaryApp(QMainWindow):
             if word in self.words_data:
                 del self.words_data[word]
                 self.save_data()
+
+    def show_oxford_definitions(self):
+        word = self.word_list.currentItem().text()
+        oxford_link = search_oxford_dictionary(word)
+        if oxford_link:
+            webbrowser.open(oxford_link)  # Open the link in the default browser
+        else:
+            QMessageBox.warning(
+                self, "No Definition", f"No definition found for '{word}'."
+            )
 
     def play_word(self):
         current_item = self.word_list.currentItem()
