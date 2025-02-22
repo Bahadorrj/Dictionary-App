@@ -103,6 +103,6 @@ Contributions are welcome! Feel free to fork the repository and submit pull requ
 
 ## Contact
 
-For any questions or issues, please open an issue on GitHub or contact [me](bahador.rj@gmail.com) directly.
+For any questions or issues, please open an issue on GitHub or contact [me](https://bahador.rj@gmail.com) directly.
 
 ---
