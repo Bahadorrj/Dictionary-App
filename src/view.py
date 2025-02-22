@@ -25,7 +25,7 @@ from PyQt6.QtCore import (
     QSize,
     Qt,
 )
-from PyQt6.QtGui import QIcon, QCursor
+from PyQt6.QtGui import QIcon, QCursor, QShortcut, QKeySequence
 from src.backend import (
     get_word_packet,
     resource_path,
@@ -158,6 +158,22 @@ class DictionaryApp(QMainWindow):
 
         main_widget.setLayout(main_layout)
         self.setCentralWidget(main_widget)
+
+        add_shortcut = QShortcut(QKeySequence("Return"), self)
+        add_shortcut.activated.connect(self.add_shortcut_triggered)
+
+        remove_shortcut = QShortcut(QKeySequence("Del"), self)
+        remove_shortcut.activated.connect(self.remove_shortcut_triggered)
+
+    def add_shortcut_triggered(self):
+        word = self.add_word_edit.text().strip()
+        if word:
+            self.add_word()
+
+    def remove_shortcut_triggered(self):
+        current_item = self.word_list.currentItem()
+        if current_item:
+            self.remove_word()
 
     def load_data(self):
         """Load words data from the JSON file located in the root directory."""
