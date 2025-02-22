@@ -22,7 +22,7 @@ This is a PyQt6-based dictionary application that allows users to add words, ret
 1. **Clone the Repository:**
    ```bash
    git clone https://github.com/Bahadorrj/Dictionary-App.git
-   cd pyqt6-dictionary-app
+   cd dictionary-app
    ```
 
 2. **Install Dependencies:**  
