@@ -11,6 +11,8 @@ This is a PyQt6-based dictionary application that allows users to add words, ret
 - **Retrieve Word Packets:** The app uses a `get_word_packet` from `src.backend.py` function to fetch word packets via an HTTP request that connects to [FreeDictionaryAPI](https://dictionaryapi.dev/). Each packet contains the word's part of speech and definition.
 - **Search Words:** Search functionality is provided for quick access to any added word.
 - **Duplicate Prevention:** The app prevents duplicate words from being added.
+- **Listen to pronunciation** The app playbacks words pronunciations.
+- **Oxford web based search** The app searches for the word's definition in [Oxford Learner's Dictionary](https://www.oxfordlearnersdictionaries.com/).
 - **Error Handling:** If a word has no valid packet (empty list returned), the app shows a message box and does not add the word.
 - **Persistent Storage:** Words are stored in a `data/words.json` file located in the root directory.
 - **Dark and Light Modes:** The application provides QSS files for dark and light modes to enhance the UI.
