@@ -13,6 +13,7 @@ This is a PyQt6-based dictionary application that allows users to add words, ret
 - **Duplicate Prevention:** The app prevents duplicate words from being added.
 - **Listen to pronunciation** The app playbacks words pronunciations.
 - **Oxford web based search** The app searches for the word's definition in [Oxford Learner's Dictionary](https://www.oxfordlearnersdictionaries.com/).
+- **ANKI word reviewing** The app has a review mechanism for the words you have added to the dictionary.
 - **Error Handling:** If a word has no valid packet (empty list returned), the app shows a message box and does not add the word.
 - **Persistent Storage:** Words are stored in a `data/words.json` file located in the root directory.
 - **Dark and Light Modes:** The application provides QSS files for dark and light modes to enhance the UI.
@@ -53,12 +54,17 @@ This is a PyQt6-based dictionary application that allows users to add words, ret
 
 3. **View Word Details:**
    - Selecting a word from the list will display its definitions and parts of speech in the table below.
+   - Listen to word's pronunciation by clicking the audio icon in the top right of the window.
+   - View the word's definition in [Oxford Learner's Dictionary](https://www.oxfordlearnersdictionaries.com/) by clicking the Oxford icon in the top right of the window.
 
-4. **Search Words:**
+4. **Reviewing:**
+   - Start reviewing relevant words by selecting the `Review` button above the search bar.
+
+5. **Search Words:**
    - Type into the search bar to filter the list of words dynamically.
 
-5. **Theme Selection:**  
-   You can load the desired theme (dark or light) by modifying the theme loading code in `main.py`.
+6. **Theme Selection:**  
+   - You can switch between dark and light theme by toggling the theme button above the search bar.
 
 ---
 
@@ -74,13 +80,14 @@ The app includes the following theme files in `resources`:
 ## Limitations
 
 - The app does not allow users to edit existing words or re-fetch their packets.
-- Backup and versioning for the `words.json` file are not supported.
+- Backup and versioning are not supported.
 
 ---
 
 ## Future Enhancements
 
 Potential future improvements may include:
+- Unify theme resources amongst dictionary and anki app.
 - Support for editing word definitions and parts of speech.
 - Backup and version control for the `words.json` file.
 
