@@ -24,8 +24,21 @@ from PyQt6.QtCore import (
     QObject,
     QSize,
     Qt,
+    QEasingCurve,
+    pyqtProperty,
+    QCoreApplication,
 )
-from PyQt6.QtGui import QIcon, QCursor, QShortcut, QKeySequence
+from PyQt6.QtGui import (
+    QIcon,
+    QCursor,
+    QShortcut,
+    QKeySequence,
+    QPainter,
+    QColor,
+    QPen,
+    QBrush,
+    QPainterPath,
+)
 from src.backend import (
     get_word_packet,
     resource_path,
@@ -56,6 +69,217 @@ class Worker(QRunnable):
         self.signals.finished.emit(self.word, output)
 
 
+class ThemeToggleButton(QPushButton):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # Set initial state
+        self.dark_mode = True
+        self.setCheckable(True)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+        # Size configurations
+        self.setFixedSize(56, 24)
+
+        # Colors for both themes
+        self.light_bg = QColor(230, 230, 230)
+        self.light_fg = QColor(250, 250, 250)
+        self.light_icon_color = QColor(240, 170, 50)  # Sun/light golden
+
+        self.dark_bg = QColor(50, 50, 70)
+        self.dark_fg = QColor(70, 70, 100)
+        self.dark_icon_color = QColor(200, 210, 255)  # Moon/star bluish
+
+        # Animation properties
+        self._toggle_position = 1.0  # 0.0 = light mode, 1.0 = dark mode
+
+        # Set up the animation
+        self.animation = QPropertyAnimation(self, b"togglePosition")
+        self.animation.setDuration(300)
+        self.animation.setEasingCurve(QEasingCurve.Type.OutCubic)
+
+        # Connect signals
+        self.clicked.connect(self.toggle_theme)
+
+    def toggle_theme(self):
+        self.dark_mode = not self.dark_mode
+
+        # Run animation
+        target_pos = 1.0 if self.dark_mode else 0.0
+        self.animation.setStartValue(self._toggle_position)
+        self.animation.setEndValue(target_pos)
+        self.animation.start()
+
+    # Define property for the animation
+    def get_toggle_position(self):
+        return self._toggle_position
+
+    def set_toggle_position(self, pos):
+        self._toggle_position = pos
+        self.update()  # Trigger a repaint
+
+    togglePosition = pyqtProperty(float, get_toggle_position, set_toggle_position)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        width = self.width()
+        height = self.height()
+
+        # Calculate interpolated colors based on animation position
+        bg_color = QColor(
+            int(
+                self.light_bg.red() * (1 - self._toggle_position)
+                + self.dark_bg.red() * self._toggle_position
+            ),
+            int(
+                self.light_bg.green() * (1 - self._toggle_position)
+                + self.dark_bg.green() * self._toggle_position
+            ),
+            int(
+                self.light_bg.blue() * (1 - self._toggle_position)
+                + self.dark_bg.blue() * self._toggle_position
+            ),
+        )
+
+        fg_color = QColor(
+            int(
+                self.light_fg.red() * (1 - self._toggle_position)
+                + self.dark_fg.red() * self._toggle_position
+            ),
+            int(
+                self.light_fg.green() * (1 - self._toggle_position)
+                + self.dark_fg.green() * self._toggle_position
+            ),
+            int(
+                self.light_fg.blue() * (1 - self._toggle_position)
+                + self.dark_fg.blue() * self._toggle_position
+            ),
+        )
+
+        icon_color = QColor(
+            int(
+                self.light_icon_color.red() * (1 - self._toggle_position)
+                + self.dark_icon_color.red() * self._toggle_position
+            ),
+            int(
+                self.light_icon_color.green() * (1 - self._toggle_position)
+                + self.dark_icon_color.green() * self._toggle_position
+            ),
+            int(
+                self.light_icon_color.blue() * (1 - self._toggle_position)
+                + self.dark_icon_color.blue() * self._toggle_position
+            ),
+        )
+
+        # Draw the background track
+        track_path = QPainterPath()
+        track_path.addRoundedRect(0, 0, width, height, height / 2, height / 2)
+
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QBrush(bg_color))
+        painter.drawPath(track_path)
+
+        # Calculate the thumb/knob position
+        thumb_size = height - 8
+        thumb_x = 4 + (width - thumb_size - 8) * self._toggle_position
+
+        # Draw the thumb/knob
+        painter.setBrush(QBrush(fg_color))
+        painter.drawEllipse(int(thumb_x), 4, thumb_size, thumb_size)
+
+        # Draw icon inside the thumb
+        icon_size = thumb_size - 12
+        icon_x = thumb_x + 6
+        icon_y = 10
+
+        painter.setPen(QPen(icon_color, 2))
+
+        # Draw either sun or moon icon based on the animation position
+        if self._toggle_position < 0.5:
+            # Sun icon
+            sun_radius = icon_size / 2
+            sun_center_x = icon_x + sun_radius
+            sun_center_y = icon_y + sun_radius
+
+            # Draw sun circle
+            painter.setBrush(QBrush(icon_color))
+            painter.drawEllipse(
+                int(icon_x), int(icon_y), int(icon_size), int(icon_size)
+            )
+
+            # Draw sun rays
+            painter.setPen(QPen(icon_color, 1.5))
+            ray_length = 3
+
+            # Adjust ray visibility based on animation
+            ray_opacity = 1.0 - (self._toggle_position * 2)
+            ray_color = QColor(icon_color)
+            ray_color.setAlphaF(ray_opacity)
+            painter.setPen(QPen(ray_color, 1.5))
+
+            if ray_opacity > 0:
+                for i in range(8):
+                    start_x = sun_center_x + (sun_radius - 1) * 0.8 * 1.414 * 0.5 * (
+                        1 if i % 2 == 0 else 0.707
+                    ) * (1 if i < 4 else -1) * (1 if i % 4 < 2 else -1)
+                    start_y = sun_center_y + (sun_radius - 1) * 0.8 * 1.414 * 0.5 * (
+                        1 if i % 2 == 1 else 0.707
+                    ) * (1 if i < 2 or i > 5 else -1) * (1 if i % 4 < 2 else 1)
+                    end_x = start_x + ray_length * 1.414 * 0.5 * (
+                        1 if i % 2 == 0 else 0.707
+                    ) * (1 if i < 4 else -1) * (1 if i % 4 < 2 else -1)
+                    end_y = start_y + ray_length * 1.414 * 0.5 * (
+                        1 if i % 2 == 1 else 0.707
+                    ) * (1 if i < 2 or i > 5 else -1) * (1 if i % 4 < 2 else 1)
+
+                    painter.drawLine(int(start_x), int(start_y), int(end_x), int(end_y))
+        else:
+            # Moon icon
+            painter.setBrush(QBrush(icon_color))
+
+            # Draw crescent moon shape
+            moon_path = QPainterPath()
+
+            # Outer circle (full moon)
+            moon_path.addEllipse(
+                int(icon_x), int(icon_y), int(icon_size), int(icon_size)
+            )
+
+            # Inner circle (shadow part) - slightly offset
+            shadow_size = icon_size * 0.8
+            shadow_offset = icon_size * 0.3
+            moon_path.addEllipse(
+                int(icon_x + shadow_offset),
+                int(icon_y),
+                int(shadow_size),
+                int(shadow_size),
+            )
+
+            # Create the crescent shape by using fillRule Odd-Even
+            moon_path.setFillRule(Qt.FillRule.WindingFill)
+
+            # Apply the path to the painter
+            painter.drawPath(moon_path)
+
+            # Add a star when in full dark mode
+            star_opacity = (self._toggle_position - 0.5) * 2
+            if star_opacity > 0:
+                star_color = QColor(icon_color)
+                star_color.setAlphaF(star_opacity)
+                painter.setPen(QPen(star_color, 1))
+                painter.setBrush(QBrush(star_color))
+
+                # Small star near moon
+                star_size = 2 + 1 * star_opacity
+                star_x = icon_x - 5
+                star_y = icon_y + 5
+                painter.drawEllipse(
+                    int(star_x), int(star_y), int(star_size), int(star_size)
+                )
+
+
 class DictionaryApp(QMainWindow):
     def __init__(self, json_path=resource_path("data/words.json")):
         super().__init__()
@@ -75,6 +299,11 @@ class DictionaryApp(QMainWindow):
         # LEFT PANEL: Search bar and list of words.
         left_widget = QWidget()
         left_layout = QVBoxLayout()
+
+        # Button to toggle between light and dark mode.
+        self.toggle_button = ThemeToggleButton()
+        self.toggle_button.clicked.connect(self.toggle_dark_mode)
+        left_layout.addWidget(self.toggle_button)
 
         # Search mechanism for filtering added words.
         self.search_edit = QLineEdit()
@@ -164,6 +393,14 @@ class DictionaryApp(QMainWindow):
 
         remove_shortcut = QShortcut(QKeySequence("Del"), self)
         remove_shortcut.activated.connect(self.remove_shortcut_triggered)
+
+    def toggle_dark_mode(self):
+        if self.toggle_button.dark_mode:
+            qss_file = resource_path("resources/dark_mode.qss")
+        else:
+            qss_file = resource_path("resources/light_mode.qss")
+        with open(qss_file, "r") as f:
+            QCoreApplication.instance().setStyleSheet(f.read())
 
     def add_shortcut_triggered(self):
         word = self.add_word_edit.text().strip()
