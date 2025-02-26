@@ -69,8 +69,6 @@ The app includes the following theme files in `resources`:
 - `dark_mode.qss` — Provides a modern, dark UI theme.
 - `light_mode.qss` — Offers a bright, clean UI theme.
 
-To apply a theme, modify the `MODE` attribute theme-loading in `main.py`.
-
 ---
 
 ## Limitations
@@ -83,7 +81,6 @@ To apply a theme, modify the `MODE` attribute theme-loading in `main.py`.
 ## Future Enhancements
 
 Potential future improvements may include:
-- Adding a theme-switching button to dynamically change themes at runtime.
 - Support for editing word definitions and parts of speech.
 - Backup and version control for the `words.json` file.
 
