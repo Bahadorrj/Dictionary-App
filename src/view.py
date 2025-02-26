@@ -45,6 +45,7 @@ from src.backend import (
     play_word,
     search_oxford_dictionary,
 )
+from src.anki import FlashcardApp
 
 
 # Worker signals to communicate between the worker thread and the UI thread.
@@ -285,7 +286,7 @@ class DictionaryApp(QMainWindow):
         super().__init__()
         self.json_path = json_path
         self.setWindowTitle("Dictionary Application")
-        self.setGeometry(100, 100, 800, 600)
+        self.setMinimumSize(800, 600)
         self.words_data = {}  # Holds words and their corresponding packets.
         self.threadpool = QThreadPool()
         self.load_data()
@@ -300,10 +301,21 @@ class DictionaryApp(QMainWindow):
         left_widget = QWidget()
         left_layout = QVBoxLayout()
 
+        h_layout = QHBoxLayout()
+        h_layout.setSpacing(10)
+        h_layout.setContentsMargins(0, 0, 0, 0)
+
         # Button to toggle between light and dark mode.
         self.toggle_button = ThemeToggleButton()
         self.toggle_button.clicked.connect(self.toggle_dark_mode)
-        left_layout.addWidget(self.toggle_button)
+        h_layout.addWidget(self.toggle_button)
+
+        # ANKI App runner
+        self.anki_button = QPushButton("Review")
+        self.anki_button.clicked.connect(self.run_anki)
+        h_layout.addWidget(self.anki_button)
+
+        left_layout.addLayout(h_layout)
 
         # Search mechanism for filtering added words.
         self.search_edit = QLineEdit()
@@ -394,13 +406,23 @@ class DictionaryApp(QMainWindow):
         remove_shortcut = QShortcut(QKeySequence("Del"), self)
         remove_shortcut.activated.connect(self.remove_shortcut_triggered)
 
+        with open(resource_path("resources/dark_mode.qss"), "r") as file:
+            style = file.read()
+            self.setStyleSheet(style)
+
     def toggle_dark_mode(self):
         if self.toggle_button.dark_mode:
             qss_file = resource_path("resources/dark_mode.qss")
         else:
             qss_file = resource_path("resources/light_mode.qss")
         with open(qss_file, "r") as f:
-            QCoreApplication.instance().setStyleSheet(f.read())
+            self.setStyleSheet(f.read())
+
+    def run_anki(self):
+        self.anki_app = FlashcardApp()
+        self.anki_app.closed.connect(self.show)
+        self.anki_app.show()
+        self.hide()
 
     def add_shortcut_triggered(self):
         word = self.add_word_edit.text().strip()
