@@ -26,7 +26,6 @@ from PyQt6.QtCore import (
     Qt,
     QEasingCurve,
     pyqtProperty,
-    QCoreApplication,
 )
 from PyQt6.QtGui import (
     QIcon,
@@ -44,6 +43,7 @@ from src.backend import (
     resource_path,
     play_word,
     search_oxford_dictionary,
+    get_stylesheet,
 )
 from src.anki import FlashcardApp
 
@@ -285,6 +285,7 @@ class DictionaryApp(QMainWindow):
     def __init__(self, json_path=resource_path("data/words.json")):
         super().__init__()
         self.json_path = json_path
+        self.setObjectName("dictionary-app")
         self.setWindowTitle("Dictionary Application")
         self.setMinimumSize(800, 600)
         self.words_data = {}  # Holds words and their corresponding packets.
@@ -340,7 +341,7 @@ class DictionaryApp(QMainWindow):
         self.word_label = QLabel("Word Details:")
         self.oxford_dictionary_button = QPushButton()
         self.oxford_dictionary_button.setIcon(
-            QIcon(resource_path("resources/oxford.png"))
+            QIcon(resource_path("resources/icons/oxford.png"))
         )
         self.oxford_dictionary_button.setIconSize(QSize(32, 32))
         self.oxford_dictionary_button.setStyleSheet("background-color: transparent;")
@@ -350,7 +351,9 @@ class DictionaryApp(QMainWindow):
         )  # Set pointer cursor
         self.oxford_dictionary_button.clicked.connect(self.show_oxford_definitions)
         self.play_sound_button = QPushButton()
-        self.play_sound_button.setIcon(QIcon(resource_path("resources/sound.png")))
+        self.play_sound_button.setIcon(
+            QIcon(resource_path("resources/icons/sound.png"))
+        )
         self.play_sound_button.setIconSize(QSize(32, 32))
         self.play_sound_button.setStyleSheet("background-color: transparent;")
         self.play_sound_button.setFixedSize(32, 32)
@@ -406,20 +409,20 @@ class DictionaryApp(QMainWindow):
         remove_shortcut = QShortcut(QKeySequence("Del"), self)
         remove_shortcut.activated.connect(self.remove_shortcut_triggered)
 
-        with open(resource_path("resources/dark_mode.qss"), "r") as file:
-            style = file.read()
-            self.setStyleSheet(style)
-
     def toggle_dark_mode(self):
         if self.toggle_button.dark_mode:
-            qss_file = resource_path("resources/dark_mode.qss")
+            theme = "dark"
         else:
-            qss_file = resource_path("resources/light_mode.qss")
-        with open(qss_file, "r") as f:
-            self.setStyleSheet(f.read())
+            theme = "light"
+        self.setStyleSheet(get_stylesheet(theme))
 
     def run_anki(self):
         self.anki_app = FlashcardApp()
+        if self.toggle_button.dark_mode:
+            theme = "dark"
+        else:
+            theme = "light"
+        self.anki_app.setStyleSheet(get_stylesheet(theme))
         self.anki_app.closed.connect(self.show)
         self.anki_app.show()
         self.hide()

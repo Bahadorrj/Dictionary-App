@@ -3,7 +3,6 @@ import datetime
 import random
 import os
 from PyQt6.QtWidgets import (
-    QApplication,
     QMainWindow,
     QWidget,
     QVBoxLayout,
@@ -213,9 +212,7 @@ class FlashcardApp(QMainWindow):
         """Set up the user interface."""
         self.setWindowTitle("Flashcard App")
         self.setMinimumSize(800, 600)
-
-        # Apply dark theme
-        self.apply_dark_theme()
+        self.setObjectName("flashcard-app")
 
         # Main layout
         main_widget = QWidget()
@@ -230,8 +227,8 @@ class FlashcardApp(QMainWindow):
         self.learned_label = QLabel("Learned: 0")
 
         for label in [self.new_label, self.reviewing_label, self.learned_label]:
-            label.setFont(QFont("Arial", 12))
-            label.setStyleSheet("color: #AAAAAA;")
+            label.setFrameShape(QFrame.Shape.NoFrame)
+            label.setObjectName("stats-label")
             stats_layout.addWidget(label)
 
         main_layout.addLayout(stats_layout)
@@ -239,15 +236,6 @@ class FlashcardApp(QMainWindow):
         # Card display area
         self.card_container = QFrame()
         self.card_container.setFrameShape(QFrame.Shape.StyledPanel)
-        self.card_container.setStyleSheet(
-            """
-            QFrame {
-                background-color: #2D3748;
-                border-radius: 15px;
-                border: 1px solid #4A5568;
-            }
-        """
-        )
         card_layout = QVBoxLayout(self.card_container)
         card_layout.setContentsMargins(30, 30, 30, 30)
         card_layout.setSpacing(20)
@@ -260,10 +248,9 @@ class FlashcardApp(QMainWindow):
         front_layout = QVBoxLayout(front_widget)
         front_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.word_label = QLabel("Click 'Start Review' to begin")
-        self.word_label.setFont(QFont("Arial", 28, QFont.Weight.Bold))
+        self.word_label.setObjectName("word-label")
         self.word_label.setWordWrap(True)
         self.word_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.word_label.setStyleSheet("color: #F7FAFC;")
         front_layout.addWidget(self.word_label)
         self.card_stack.addWidget(front_widget)
 
@@ -272,14 +259,11 @@ class FlashcardApp(QMainWindow):
         back_layout = QVBoxLayout(back_widget)
         back_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.word_title = QLabel()
-        self.word_title.setFont(QFont("Arial", 24, QFont.Weight.Bold))
-        self.word_title.setStyleSheet("color: #F7FAFC; margin-bottom: 10px;")
+        self.word_title.setObjectName("word-title")
         back_layout.addWidget(self.word_title)
 
         self.definitions_label = QLabel()
-        self.definitions_label.setFont(QFont("Arial", 14))
         self.definitions_label.setWordWrap(True)
-        self.definitions_label.setStyleSheet("color: #F7FAFC;")
         self.definitions_label.setTextFormat(Qt.TextFormat.RichText)
         back_layout.addWidget(self.definitions_label)
 
@@ -294,14 +278,10 @@ class FlashcardApp(QMainWindow):
 
         # Review start button
         self.start_button = QPushButton("Start Review")
-        self.start_button.setObjectName("btn")
-        self.start_button.setFont(QFont("Arial", 12))
         self.start_button.clicked.connect(self.start_review)
 
         # Flip button
         self.flip_button = QPushButton("Flip Card")
-        self.flip_button.setObjectName("btn")
-        self.flip_button.setFont(QFont("Arial", 12))
         self.flip_button.clicked.connect(self.flip_card)
         self.flip_button.setEnabled(False)
 
@@ -317,21 +297,16 @@ class FlashcardApp(QMainWindow):
         self.response_buttons = []
         for text, quality, color in response_buttons:
             btn = QPushButton(text)
-            btn.setFont(QFont("Arial", 12))
             btn.setStyleSheet(
                 f"""
                 QPushButton {{
                     background-color: {color};
-                    color: white;
-                    border-radius: 5px;
-                    padding: 10px;
-                    min-width: 100px;
                 }}
                 QPushButton:hover {{
                     background-color: {color}CC;
                 }}
                 QPushButton:pressed {{
-                    background-color: {color}AA;
+                    background-color: {color}BB;
                 }}
             """
             )
@@ -348,41 +323,6 @@ class FlashcardApp(QMainWindow):
 
         self.setCentralWidget(main_widget)
         self.update_stats_display()
-
-    def apply_dark_theme(self):
-        """Apply dark theme to the application."""
-        palette = QPalette()
-        palette.setColor(QPalette.ColorRole.Window, QColor(30, 30, 30))
-        palette.setColor(QPalette.ColorRole.WindowText, QColor(255, 255, 255))
-        palette.setColor(QPalette.ColorRole.Base, QColor(45, 45, 45))
-        palette.setColor(QPalette.ColorRole.AlternateBase, QColor(50, 50, 50))
-        palette.setColor(QPalette.ColorRole.Text, QColor(255, 255, 255))
-        palette.setColor(QPalette.ColorRole.Button, QColor(53, 53, 53))
-        palette.setColor(QPalette.ColorRole.ButtonText, QColor(255, 255, 255))
-        palette.setColor(QPalette.ColorRole.Link, QColor(42, 130, 218))
-        palette.setColor(QPalette.ColorRole.Highlight, QColor(42, 130, 218))
-        palette.setColor(QPalette.ColorRole.HighlightedText, QColor(0, 0, 0))
-        QApplication.setPalette(palette)
-
-        # Global stylesheet for buttons
-        self.setStyleSheet(
-            """
-            QPushButton {
-                background-color: #4A5568;
-                color: white;
-                border-radius: 5px;
-                padding: 10px;
-                min-width: 100px;
-            }
-            QPushButton:hover {
-                background-color: #2D3748;
-            }
-            QPushButton:disabled {
-                background-color: #718096;
-                color: #CBD5E0;
-            }
-        """
-        )
 
     def start_review(self):
         """Start or continue the review session."""

@@ -1,0 +1,114 @@
+QWidget {
+    background-color: ${main-background};
+    color: ${text-color};
+    font-family: Arial, sans-serif;
+}
+
+/* Main Window */
+QMainWindow {
+    background-color: ${main-background};
+}
+
+#dictionary-app QWidget {
+    font-size: 14px;
+}
+
+/* QListWidget styling */
+#dictionary-app QListWidget {
+    background-color: ${secondary-background};
+    border: 1px solid ${border-color};
+    selection-background-color: ${highlight-background};
+    selection-color: ${highlight-text-color};
+}
+
+/* QLineEdit styling */
+#dictionary-app QLineEdit {
+    background-color: ${secondary-background};
+    border: 1px solid ${border-color};
+    padding: 4px;
+    border-radius: 4px;
+}
+
+/* QPushButton styling */
+#dictionary-app QPushButton {
+    background-color: ${button-background};
+    border: none;
+    color: ${button-text-color};
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+#dictionary-app QPushButton:hover {
+    background-color: ${button-hover-background};
+}
+
+#dictionary-app QPushButton:pressed {
+    background-color: ${button-pressed-background};
+}
+
+/* QTableWidget styling */
+#dictionary-app QTableWidget {
+    background-color: ${secondary-background};
+    gridline-color: ${border-color};
+    border: 1px solid ${border-color};
+}
+
+#dictionary-app QHeaderView::section {
+    background-color: ${tertiary-background};
+    padding: 4px;
+    border: 1px solid ${border-color-darker};
+}
+
+/* QMessageBox styling */
+#dictionary-app QMessageBox {
+    background-color: ${main-background};
+    color: ${text-color};
+}
+
+/* Flashcard App */
+#flashcard-app #stats-label {
+    border: none;
+    color: ${context-color};
+    font-size: 14px;
+}
+
+#flashcard-app #word-label {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+#flashcard-app #word-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#flashcard-app QFrame {
+    background-color: ${main-background};
+    border-radius: 15px;
+    border: 1px solid ${border-color};
+    padding: 5px;
+}
+
+#flashcard-app QPushButton {
+    background-color: ${button-background};
+    color: ${button-text-color};
+    border-radius: 5px;
+    padding: 10px;
+    min-width: 100px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#flashcard-app QPushButton:hover {
+    background-color: ${button-hover-background};
+}
+
+#flashcard-app QPushButton:pressed {
+    background-color: ${button-pressed-background};
+}
+
+#flashcard-app QPushButton:disabled {
+    background-color: #718096;
+    color: #CBD5E0;
+}

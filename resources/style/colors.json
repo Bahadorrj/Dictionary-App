@@ -1,0 +1,32 @@
+{
+    "dark": {
+        "main-background": "#2b2b2b",
+        "secondary-background": "#3c3f41",
+        "tertiary-background": "#555555",
+        "text-color": "#dcdcdc",
+        "border-color": "#555555",
+        "border-color-darker": "#444444",
+        "highlight-background": "#007acc",
+        "highlight-text-color": "#ffffff",
+        "button-background": "#007acc",
+        "button-text-color": "#ffffff",
+        "button-hover-background": "#005f9e",
+        "button-pressed-background": "#004b7c",
+        "context-color": "#7863a8"
+    },
+    "light": {
+        "main-background": "#f0f0f0",
+        "secondary-background": "#ffffff",
+        "tertiary-background": "#e0e0e0",
+        "text-color": "#202020",
+        "border-color": "#c8c8c8",
+        "border-color-darker": "#d0d0d0",
+        "highlight-background": "#007acc",
+        "highlight-text-color": "#ffffff",
+        "button-background": "#007acc",
+        "button-text-color": "#ffffff",
+        "button-hover-background": "#005f9e",
+        "button-pressed-background": "#004b7c",
+        "context-color": "#63a8a7"
+    }
+}

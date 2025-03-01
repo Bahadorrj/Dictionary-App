@@ -1,6 +1,7 @@
 import sys
 import os
 import requests
+from json import load
 from gtts import gTTS
 from playsound import playsound
 from googlesearch import search
@@ -99,6 +100,20 @@ def search_oxford_dictionary(word):
     except Exception as e:
         print(f"Error: {e}")
         return None
+
+
+def get_stylesheet(mode):
+    with open(resource_path("resources/style/style.qss"), "r") as f:
+        stylesheet = f.read()
+    with open(resource_path("resources/style/colors.json"), "r") as f:
+        colors = load(f)
+    if mode == "dark":
+        palette = colors["dark"]
+    else:
+        palette = colors["light"]
+    for key, value in palette.items():
+        stylesheet = stylesheet.replace("${" + key + "}", value)
+    return stylesheet
 
 
 # Example usage
