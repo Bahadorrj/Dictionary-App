@@ -19,6 +19,7 @@ QMainWindow {
     border: 1px solid ${border-color};
     selection-background-color: ${highlight-background};
     selection-color: ${highlight-text-color};
+    font-size: 16px;
 }
 
 /* QLineEdit styling */
