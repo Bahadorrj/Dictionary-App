@@ -411,17 +411,13 @@ class DictionaryApp(QMainWindow):
         else:
             theme = "light"
         self.setStyleSheet(get_stylesheet(theme))
+        if self.anki_app:
+            self.anki_app.setStyleSheet(get_stylesheet(theme))
 
     def run_anki(self):
         self.anki_app = FlashcardApp()
-        if self.toggle_button.dark_mode:
-            theme = "dark"
-        else:
-            theme = "light"
-        self.anki_app.setStyleSheet(get_stylesheet(theme))
-        self.anki_app.closed.connect(self.show)
+        self.toggle_dark_mode()
         self.anki_app.show()
-        self.hide()
 
     def add_shortcut_triggered(self):
         word = self.add_word_edit.text().strip()
