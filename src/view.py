@@ -392,10 +392,6 @@ class DictionaryApp(QMainWindow):
         self.add_word_button.clicked.connect(self.add_word)
         controls_layout.addWidget(self.add_word_button)
 
-        self.remove_word_button = QPushButton("Remove Word")
-        self.remove_word_button.clicked.connect(self.remove_word)
-        controls_layout.addWidget(self.remove_word_button)
-
         right_layout.addLayout(controls_layout)
         right_widget.setLayout(right_layout)
         main_layout.addWidget(right_widget, 2)
